@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İzmir Yarımada Hastane Ulaşım ve Nüfus Analizi</title>
+    <title>İzmir Yarımada Hastane Ulaşım ve Nüfus Analizi (72 Mahalle)</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -38,19 +38,19 @@
         
         @keyframes pulse-red-hospital {
             0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.9); }
-            70% { box-shadow: 0 0 0 18px rgba(231, 76, 60, 0); }
+            70% { box-shadow: 0 0 0 20px rgba(231, 76, 60, 0); }
             100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
         }
         @keyframes pulse-blue-hospital {
             0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.9); }
-            70% { box-shadow: 0 0 0 18px rgba(52, 152, 219, 0); }
+            70% { box-shadow: 0 0 0 20px rgba(52, 152, 219, 0); }
             100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
         }
 
         .hospital-marker-seferi { animation: pulse-red-hospital 1.8s infinite; border-radius: 50%; }
         .hospital-marker-urla { animation: pulse-blue-hospital 1.8s infinite; border-radius: 50%; }
 
-        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); }
         .leaflet-popup-content { margin: 0; line-height: 1.4; min-width: 280px; }
         .leaflet-control-layers { border-radius: 12px !important; border: 1px solid #e2e8f0 !important; font-size: 12px !important; }
 
@@ -61,13 +61,13 @@
 </head>
 <body class="h-full bg-slate-900 text-slate-800 flex flex-col md:flex-row overflow-hidden">
 
-    <!-- Mobil Üst Başlık -->
+    <!-- Mobil Üst Başlık Barı -->
     <div class="md:hidden bg-slate-900 text-white p-3 flex items-center justify-between z-[2000] border-b border-slate-800">
         <div class="flex items-center space-x-2">
             <i class="fa-solid fa-hospital-user text-rose-500 text-lg"></i>
             <div>
                 <h1 class="font-bold text-xs leading-none">İzmir Hastane Ulaşım Analizi</h1>
-                <span class="text-[10px] text-rose-400 font-medium">Güzelbahçe • Urla • Seferihisar</span>
+                <span class="text-[10px] text-rose-400 font-medium">Güzelbahçe • Urla • Seferihisar (72 Mahalle)</span>
             </div>
         </div>
         <button id="toggleSidebarBtn" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-lg text-xs flex items-center gap-2 border border-rose-500 shadow-md">
@@ -79,7 +79,7 @@
     <!-- Mobil Arka Plan Karartma (Overlay) -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[2999] hidden md:hidden transition-opacity"></div>
 
-    <!-- Yan Kontrol Paneli -->
+    <!-- Yan Kontrol Paneli (z-[3000] ile mobil çakışma önlendi) -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-[3000] w-full md:w-96 bg-white flex flex-col border-r border-slate-200 shadow-2xl transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static">
         
         <!-- Üst Başlık ve Hastane Bilgileri -->
@@ -91,7 +91,7 @@
                     </div>
                     <div>
                         <h2 class="font-bold text-base leading-tight">Hastane Ulaşım Analizi</h2>
-                        <p class="text-xs text-slate-400">Yarımada Mahalle & Nüfus Atamaları</p>
+                        <p class="text-xs text-slate-400">3 İlçe • 72 Mahalle Kapsamı</p>
                     </div>
                 </div>
                 <button id="closeSidebarBtn" class="md:hidden text-slate-400 hover:text-white p-1 rounded-lg bg-slate-800">
@@ -135,10 +135,10 @@
             <div class="flex gap-2">
                 <button id="runAnalysisBtn" class="flex-1 py-2.5 px-3 bg-gradient-to-r from-rose-600 via-purple-600 to-blue-600 hover:from-rose-700 hover:to-blue-700 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-bolt"></i>
-                    <span>Analizi Yeniden Hesapla</span>
+                    <span>Analizi Hesapla</span>
                 </button>
 
-                <button id="exportCsvBtn" title="Sonuçları CSV olarak indir" class="py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1">
+                <button id="exportCsvBtn" title="Tüm Mahalle Sonuçlarını CSV İndir" class="py-2.5 px-3 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs rounded-xl shadow-md flex items-center justify-center gap-1">
                     <i class="fa-solid fa-file-csv text-sm"></i>
                     <span>CSV</span>
                 </button>
@@ -153,10 +153,10 @@
             </div>
 
             <div class="flex flex-wrap gap-1 text-[11px]">
-                <button class="filter-btn active px-2.5 py-1 rounded-md bg-slate-800 text-white font-medium" data-filter="all">Tümü</button>
-                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Güzelbahçe">Güzelbahçe</button>
-                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Urla">Urla</button>
-                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Seferihisar">Seferihisar</button>
+                <button class="filter-btn active px-2.5 py-1 rounded-md bg-slate-800 text-white font-medium" data-filter="all">Tümü (72)</button>
+                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Güzelbahçe">Güzelbahçe (12)</button>
+                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Urla">Urla (37)</button>
+                <button class="filter-btn px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 font-medium" data-filter="Seferihisar">Seferihisar (23)</button>
             </div>
         </div>
 
@@ -170,10 +170,10 @@
         </div>
     </aside>
 
-    <!-- Harita ve Üst Analiz Bandı -->
+    <!-- Harita Alanı ve Üst Analiz Bandı -->
     <main class="flex-1 relative h-full w-full flex flex-col">
         
-        <!-- SAYSANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
+        <!-- SAYFANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
         <div id="topStatsBanner" class="absolute top-3 left-3 right-3 md:left-12 md:right-12 z-[1000] bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-2xl border border-slate-700/80 shadow-2xl transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
                 
@@ -243,6 +243,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <script>
+        // HASTANE KOORDİNATLARI
         const HOSPITALS = {
             SEFERIHISAR: {
                 id: 'seferihisar',
@@ -264,36 +265,85 @@
             }
         };
 
-        // 23 Mahallenin Tamamı (Merkez Koordinatları ve TÜİK Nüfus Verileriyle)
+        // 3 İLÇENİN TÜM 72 RESMİ MAHALLESİ (Güzelbahçe: 12, Seferihisar: 23, Urla: 37)
         const NEIGHBORHOODS_DATA = [
-            // Güzelbahçe (7 Mahalle)
-            { name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920, pop: 8500 },
-            { name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680, pop: 7200 },
-            { name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950, pop: 6800 },
-            { name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820, pop: 4100 },
+            // GÜZELBAHÇE (12 Mahalle)
             { name: 'Atatürk', district: 'Güzelbahçe', lat: 38.3650, lng: 26.8870, pop: 5300 },
-            { name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850, pop: 4500 },
             { name: 'Çamlı', district: 'Güzelbahçe', lat: 38.3180, lng: 26.9080, pop: 2100 },
+            { name: 'Çelebi', district: 'Güzelbahçe', lat: 38.3750, lng: 26.8980, pop: 1800 },
+            { name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950, pop: 6800 },
+            { name: 'Küçükkaya', district: 'Güzelbahçe', lat: 38.3300, lng: 26.9350, pop: 600 },
+            { name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820, pop: 4100 },
+            { name: 'Mustafa Kemal Paşa', district: 'Güzelbahçe', lat: 38.3670, lng: 26.8790, pop: 3500 },
+            { name: 'Payamlı', district: 'Güzelbahçe', lat: 38.2950, lng: 26.9200, pop: 1100 },
+            { name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680, pop: 7200 },
+            { name: 'Yaka', district: 'Güzelbahçe', lat: 38.3580, lng: 26.8880, pop: 2900 },
+            { name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920, pop: 8500 },
+            { name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850, pop: 4500 },
 
-            // Urla (7 Mahalle)
-            { name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640, pop: 4200 },
-            { name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710, pop: 6800 },
-            { name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730, pop: 5400 },
-            { name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220, pop: 6100 },
-            { name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480, pop: 7900 },
-            { name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290, pop: 3100 },
-            { name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520, pop: 4800 },
-
-            // Seferihisar (9 Mahalle)
-            { name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390, pop: 12500 },
-            { name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450, pop: 11200 },
-            { name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410, pop: 9800 },
-            { name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880, pop: 4300 },
+            // SEFERİHİSAR (23 Mahalle)
             { name: 'Akarca', district: 'Seferihisar', lat: 38.1680, lng: 26.8290, pop: 3200 },
-            { name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520, pop: 2800 },
+            { name: 'Atatürk', district: 'Seferihisar', lat: 38.1980, lng: 26.8480, pop: 5800 },
+            { name: 'Bengiler', district: 'Seferihisar', lat: 38.0750, lng: 26.8750, pop: 1200 },
+            { name: 'Beyler', district: 'Seferihisar', lat: 38.2650, lng: 26.9250, pop: 800 },
+            { name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390, pop: 12500 },
+            { name: 'Cumhuriyet', district: 'Seferihisar', lat: 38.0850, lng: 26.9150, pop: 6200 },
+            { name: 'Çamtepe', district: 'Seferihisar', lat: 38.2800, lng: 26.8850, pop: 500 },
+            { name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410, pop: 9800 },
             { name: 'Düzce', district: 'Seferihisar', lat: 38.2250, lng: 26.8350, pop: 1900 },
-            { name: 'Doğanbey', district: 'Seferihisar', lat: 38.0890, lng: 26.8890, pop: 6400 },
-            { name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280, pop: 7100 }
+            { name: 'Gödence', district: 'Seferihisar', lat: 38.2450, lng: 26.9350, pop: 600 },
+            { name: 'Gölcük', district: 'Seferihisar', lat: 38.2200, lng: 26.9100, pop: 700 },
+            { name: 'Hıdırlık', district: 'Seferihisar', lat: 38.1910, lng: 26.8330, pop: 8400 },
+            { name: 'İhsaniye', district: 'Seferihisar', lat: 38.2480, lng: 26.8900, pop: 450 },
+            { name: 'Kavakdere', district: 'Seferihisar', lat: 38.1350, lng: 26.8800, pop: 900 },
+            { name: 'Mersinaki', district: 'Seferihisar', lat: 38.1800, lng: 26.8150, pop: 2300 },
+            { name: 'Orhanlı', district: 'Seferihisar', lat: 38.1750, lng: 26.9550, pop: 1400 },
+            { name: 'Payamlı', district: 'Seferihisar', lat: 38.0800, lng: 26.8980, pop: 3100 },
+            { name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880, pop: 4300 },
+            { name: 'Tepecik', district: 'Seferihisar', lat: 38.1850, lng: 26.8380, pop: 3800 },
+            { name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450, pop: 11200 },
+            { name: 'Turgut', district: 'Seferihisar', lat: 38.2350, lng: 26.8800, pop: 850 },
+            { name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520, pop: 2800 },
+            { name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280, pop: 7100 },
+
+            // URLA (37 Mahalle)
+            { name: 'Altıntaş', district: 'Urla', lat: 38.3210, lng: 26.7600, pop: 5200 },
+            { name: 'Atatürk', district: 'Urla', lat: 38.3280, lng: 26.7680, pop: 6100 },
+            { name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290, pop: 3100 },
+            { name: 'Balıklıova', district: 'Urla', lat: 38.4620, lng: 26.6120, pop: 1800 },
+            { name: 'Barbaros', district: 'Urla', lat: 38.2880, lng: 26.6020, pop: 750 },
+            { name: 'Birgi', district: 'Urla', lat: 38.2600, lng: 26.6500, pop: 600 },
+            { name: 'Camiatik', district: 'Urla', lat: 38.3220, lng: 26.7680, pop: 3900 },
+            { name: 'Çamlıçay', district: 'Urla', lat: 38.3580, lng: 26.8080, pop: 4200 },
+            { name: 'Demircili', district: 'Urla', lat: 38.2420, lng: 26.6900, pop: 450 },
+            { name: 'Denizli', district: 'Urla', lat: 38.3620, lng: 26.8350, pop: 6400 },
+            { name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520, pop: 4800 },
+            { name: 'Güvendik', district: 'Urla', lat: 38.3550, lng: 26.7580, pop: 3100 },
+            { name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640, pop: 4200 },
+            { name: 'İçmeler', district: 'Urla', lat: 38.3380, lng: 26.7150, pop: 2200 },
+            { name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730, pop: 5400 },
+            { name: 'Kadıovacık', district: 'Urla', lat: 38.3850, lng: 26.5850, pop: 380 },
+            { name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220, pop: 6100 },
+            { name: 'Karapınar', district: 'Urla', lat: 38.3150, lng: 26.7580, pop: 2900 },
+            { name: 'Kuşçular', district: 'Urla', lat: 38.2950, lng: 26.7450, pop: 4100 },
+            { name: 'M.Fevzi Çakmak', district: 'Urla', lat: 38.3480, lng: 26.7650, pop: 3700 },
+            { name: 'Naipli', district: 'Urla', lat: 38.3180, lng: 26.7650, pop: 1800 },
+            { name: 'Nohutalan', district: 'Urla', lat: 38.3120, lng: 26.5820, pop: 320 },
+            { name: 'Ovacık', district: 'Urla', lat: 38.2700, lng: 26.7200, pop: 850 },
+            { name: 'Özbek', district: 'Urla', lat: 38.3750, lng: 26.7200, pop: 2600 },
+            { name: 'Rüstem', district: 'Urla', lat: 38.3290, lng: 26.7580, pop: 3400 },
+            { name: 'Sıra', district: 'Urla', lat: 38.3200, lng: 26.7720, pop: 2800 },
+            { name: 'Şirinkent', district: 'Urla', lat: 38.3680, lng: 26.7450, pop: 3200 },
+            { name: 'Torasan', district: 'Urla', lat: 38.3320, lng: 26.7380, pop: 3900 },
+            { name: 'Uzunkuyu', district: 'Urla', lat: 38.3100, lng: 26.5280, pop: 1400 },
+            { name: 'Yağcılar', district: 'Urla', lat: 38.2380, lng: 26.6550, pop: 700 },
+            { name: 'Yaka', district: 'Urla', lat: 38.3250, lng: 26.7610, pop: 2100 },
+            { name: 'Yelaltı', district: 'Urla', lat: 38.3220, lng: 26.7630, pop: 2600 },
+            { name: 'Yenice', district: 'Urla', lat: 38.3270, lng: 26.7660, pop: 3800 },
+            { name: 'Yenikent', district: 'Urla', lat: 38.3310, lng: 26.7720, pop: 4100 },
+            { name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710, pop: 6800 },
+            { name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480, pop: 7900 },
+            { name: 'Zeytineli', district: 'Urla', lat: 38.2250, lng: 26.5400, pop: 550 }
         ];
 
         let currentCalculationMode = 'osrm';
@@ -301,8 +351,8 @@
         let searchQuery = '';
         const osrmCache = new Map();
 
-        const initialCenter = [38.25, 26.80];
-        const map = L.map('map', { zoomControl: false }).setView(initialCenter, 11);
+        const initialCenter = [38.25, 26.78];
+        const map = L.map('map', { zoomControl: false }).setView(initialCenter, 10);
         L.control.zoom({ position: 'topright' }).addTo(map);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -432,7 +482,7 @@
                 const colorHex = item.assignedHospital.color;
 
                 const marker = L.circleMarker([item.lat, item.lng], {
-                    radius: 8,
+                    radius: 7,
                     fillColor: colorHex,
                     color: '#ffffff',
                     weight: 2,
@@ -535,7 +585,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "yarimada_hastane_analizi.csv");
+            link.setAttribute("download", "yarimada_72mahalle_hastane_analizi.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -600,7 +650,7 @@
         overlay.addEventListener('click', closeSidebar);
 
         document.getElementById('runAnalysisBtn').addEventListener('click', triggerFullAnalysis);
-        document.getElementById('resetViewBtn').addEventListener('click', () => map.setView(initialCenter, 11));
+        document.getElementById('resetViewBtn').addEventListener('click', () => map.setView(initialCenter, 10));
         document.getElementById('clearRoutesBtn').addEventListener('click', () => {
             routeLayerGroup.clearLayers();
             document.getElementById('clearRoutesBtn').classList.add('hidden');
