@@ -50,7 +50,7 @@
         .hospital-marker-seferi { animation: pulse-red-hospital 1.8s infinite; border-radius: 50%; }
         .hospital-marker-urla { animation: pulse-blue-hospital 1.8s infinite; border-radius: 50%; }
 
-        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); }
         .leaflet-popup-content { margin: 0; line-height: 1.4; min-width: 280px; }
         .leaflet-control-layers { border-radius: 12px !important; border: 1px solid #e2e8f0 !important; font-size: 12px !important; }
 
@@ -61,7 +61,7 @@
 </head>
 <body class="h-full bg-slate-900 text-slate-800 flex flex-col md:flex-row overflow-hidden">
 
-    <!-- Mobil Üst Başlık -->
+    <!-- Mobil Üst Başlık Barı -->
     <div class="md:hidden bg-slate-900 text-white p-3 flex items-center justify-between z-[2000] border-b border-slate-800">
         <div class="flex items-center space-x-2">
             <i class="fa-solid fa-hospital-user text-rose-500 text-lg"></i>
@@ -79,7 +79,7 @@
     <!-- Mobil Arka Plan Karartma (Overlay) -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[2999] hidden md:hidden transition-opacity"></div>
 
-    <!-- Yan Kontrol Paneli -->
+    <!-- Yan Kontrol Paneli (Z-INDEX: z-[3000] - Üst Bandın Üzerine Çıkar) -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-[3000] w-full md:w-96 bg-white flex flex-col border-r border-slate-200 shadow-2xl transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static">
         
         <!-- Üst Başlık ve Hastane Bilgileri -->
@@ -113,7 +113,7 @@
                         <div class="w-3 h-3 rounded-full bg-[#3498db] flex-shrink-0"></div>
                         <span class="font-bold text-blue-300 truncate">Urla Devlet H.</span>
                     </div>
-                    <span class="text-[10px] text-slate-300 font-mono mt-1">38°20'15.7"N 26°46'34.0"E</span>
+                    <span class="text-[10px] text-slate-300 font-mono mt-1">38°19'48.4"N 26°44'45.2"E</span>
                 </div>
             </div>
         </div>
@@ -166,14 +166,14 @@
         </div>
 
         <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-500">
-            <span><i class="fa-solid fa-mouse-pointer text-slate-400 mr-1"></i>Haritadaki herhangi bir alana tıklayarak rotaları çizebilirsiniz.</span>
+            <span><i class="fa-solid fa-mouse-pointer text-slate-400 mr-1"></i>Haritadaki herhangi bir alana tıklayarak canlı rotaları görebilirsiniz.</span>
         </div>
     </aside>
 
-    <!-- Harita ve Üst Analiz Bandı -->
+    <!-- Harita Alanı ve Üst Analiz Bandı -->
     <main class="flex-1 relative h-full w-full flex flex-col">
         
-        <!-- SAYSANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
+        <!-- SAYFANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
         <div id="topStatsBanner" class="absolute top-3 left-3 right-3 md:left-12 md:right-12 z-[1000] bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-2xl border border-slate-700/80 shadow-2xl transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
                 
@@ -243,6 +243,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <script>
+        // HASTANE KOORDİNATLARI (Tam ve Güncel)
         const HOSPITALS = {
             SEFERIHISAR: {
                 id: 'seferihisar',
@@ -257,14 +258,14 @@
                 id: 'urla',
                 name: 'Urla Devlet Hastanesi',
                 shortName: 'Urla D.H.',
-                lat: 38.337700,
-                lng: 26.776100,
+                lat: 38.3301098, // Güncellenen tam koordinat
+                lng: 26.7458997, // Güncellenen tam koordinat
                 color: '#3498db',
                 badgeBg: 'bg-blue-50 text-blue-700 border-blue-200'
             }
         };
 
-        // 23 Mahallenin Tamamı (Organik Poligon Sınırları ve TÜİK Nüfus Verileriyle)
+        // 23 Mahallenin Tamamı (Poligon Sınırları ve TÜİK Nüfus Verileri)
         const NEIGHBORHOODS_DATA = [
             // Güzelbahçe (7 Mahalle)
             { 
