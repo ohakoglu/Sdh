@@ -50,7 +50,7 @@
         .hospital-marker-seferi { animation: pulse-red-hospital 1.8s infinite; border-radius: 50%; }
         .hospital-marker-urla { animation: pulse-blue-hospital 1.8s infinite; border-radius: 50%; }
 
-        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); }
+        .leaflet-popup-content-wrapper { border-radius: 16px; padding: 0; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
         .leaflet-popup-content { margin: 0; line-height: 1.4; min-width: 280px; }
         .leaflet-control-layers { border-radius: 12px !important; border: 1px solid #e2e8f0 !important; font-size: 12px !important; }
 
@@ -61,7 +61,7 @@
 </head>
 <body class="h-full bg-slate-900 text-slate-800 flex flex-col md:flex-row overflow-hidden">
 
-    <!-- Mobil Üst Başlık Barı -->
+    <!-- Mobil Üst Başlık -->
     <div class="md:hidden bg-slate-900 text-white p-3 flex items-center justify-between z-[2000] border-b border-slate-800">
         <div class="flex items-center space-x-2">
             <i class="fa-solid fa-hospital-user text-rose-500 text-lg"></i>
@@ -79,7 +79,7 @@
     <!-- Mobil Arka Plan Karartma (Overlay) -->
     <div id="sidebarOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[2999] hidden md:hidden transition-opacity"></div>
 
-    <!-- Yan Kontrol Paneli (Z-INDEX: z-[3000] - Üst Bandın Üzerine Çıkar) -->
+    <!-- Yan Kontrol Paneli -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-[3000] w-full md:w-96 bg-white flex flex-col border-r border-slate-200 shadow-2xl transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static">
         
         <!-- Üst Başlık ve Hastane Bilgileri -->
@@ -166,14 +166,14 @@
         </div>
 
         <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-500">
-            <span><i class="fa-solid fa-mouse-pointer text-slate-400 mr-1"></i>Haritadaki herhangi bir alana tıklayarak canlı rotaları görebilirsiniz.</span>
+            <span><i class="fa-solid fa-mouse-pointer text-slate-400 mr-1"></i>Listeden veya haritadaki noktadan seçim yaparak canlı rotaları görebilirsiniz.</span>
         </div>
     </aside>
 
-    <!-- Harita Alanı ve Üst Analiz Bandı -->
+    <!-- Harita ve Üst Analiz Bandı -->
     <main class="flex-1 relative h-full w-full flex flex-col">
         
-        <!-- SAYFANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
+        <!-- SAYSANIN ÜSTÜNDEKİ DİNAMİK HESAPLAMA VE NÜFUS ÖZET BANTI -->
         <div id="topStatsBanner" class="absolute top-3 left-3 right-3 md:left-12 md:right-12 z-[1000] bg-slate-900/90 backdrop-blur-md text-white p-3 rounded-2xl border border-slate-700/80 shadow-2xl transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
                 
@@ -243,7 +243,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <script>
-        // HASTANE KOORDİNATLARI (Tam ve Güncel)
         const HOSPITALS = {
             SEFERIHISAR: {
                 id: 'seferihisar',
@@ -258,112 +257,43 @@
                 id: 'urla',
                 name: 'Urla Devlet Hastanesi',
                 shortName: 'Urla D.H.',
-                lat: 38.3301098, // Güncellenen tam koordinat
-                lng: 26.7458997, // Güncellenen tam koordinat
+                lat: 38.3301098,
+                lng: 26.7458997,
                 color: '#3498db',
                 badgeBg: 'bg-blue-50 text-blue-700 border-blue-200'
             }
         };
 
-        // 23 Mahallenin Tamamı (Poligon Sınırları ve TÜİK Nüfus Verileri)
+        // 23 Mahallenin Tamamı (Merkez Koordinatları ve TÜİK Nüfus Verileriyle)
         const NEIGHBORHOODS_DATA = [
             // Güzelbahçe (7 Mahalle)
-            { 
-                name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920, pop: 8500,
-                polygon: [[38.3820, 26.8810], [38.3850, 26.9020], [38.3680, 26.9050], [38.3650, 26.8850]] 
-            },
-            { 
-                name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680, pop: 7200,
-                polygon: [[38.3760, 26.8550], [38.3780, 26.8800], [38.3600, 26.8820], [38.3580, 26.8580]] 
-            },
-            { 
-                name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950, pop: 6800,
-                polygon: [[38.3680, 26.8850], [38.3700, 26.9100], [38.3520, 26.9120], [38.3500, 26.8880]] 
-            },
-            { 
-                name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820, pop: 4100,
-                polygon: [[38.3780, 26.8720], [38.3800, 26.8920], [38.3640, 26.8950], [38.3620, 26.8750]] 
-            },
-            { 
-                name: 'Atatürk', district: 'Güzelbahçe', lat: 38.3650, lng: 26.8870, pop: 5300,
-                polygon: [[38.3720, 26.8780], [38.3740, 26.8980], [38.3580, 26.9000], [38.3560, 26.8800]] 
-            },
-            { 
-                name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850, pop: 4500,
-                polygon: [[38.3520, 26.8700], [38.3550, 26.9000], [38.3300, 26.9050], [38.3280, 26.8720]] 
-            },
-            { 
-                name: 'Çamlı', district: 'Güzelbahçe', lat: 38.3180, lng: 26.9080, pop: 2100,
-                polygon: [[38.3280, 26.8900], [38.3300, 26.9250], [38.3050, 26.9300], [38.3020, 26.8950]] 
-            },
+            { name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920, pop: 8500 },
+            { name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680, pop: 7200 },
+            { name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950, pop: 6800 },
+            { name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820, pop: 4100 },
+            { name: 'Atatürk', district: 'Güzelbahçe', lat: 38.3650, lng: 26.8870, pop: 5300 },
+            { name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850, pop: 4500 },
+            { name: 'Çamlı', district: 'Güzelbahçe', lat: 38.3180, lng: 26.9080, pop: 2100 },
 
             // Urla (7 Mahalle)
-            { 
-                name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640, pop: 4200,
-                polygon: [[38.3320, 26.7520], [38.3350, 26.7750], [38.3150, 26.7780], [38.3120, 26.7550]] 
-            },
-            { 
-                name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710, pop: 6800,
-                polygon: [[38.3350, 26.7620], [38.3380, 26.7820], [38.3180, 26.7850], [38.3150, 26.7650]] 
-            },
-            { 
-                name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730, pop: 5400,
-                polygon: [[38.3720, 26.7600], [38.3750, 26.7880], [38.3500, 26.7900], [38.3480, 26.7620]] 
-            },
-            { 
-                name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220, pop: 6100,
-                polygon: [[38.3750, 26.8050], [38.3780, 26.8400], [38.3520, 26.8420], [38.3500, 26.8080]] 
-            },
-            { 
-                name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480, pop: 7900,
-                polygon: [[38.3720, 26.8350], [38.3750, 26.8620], [38.3520, 26.8650], [38.3500, 26.8380]] 
-            },
-            { 
-                name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290, pop: 3100,
-                polygon: [[38.2980, 26.8100], [38.3020, 26.8480], [38.2680, 26.8520], [38.2650, 26.8120]] 
-            },
-            { 
-                name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520, pop: 4800,
-                polygon: [[38.3450, 26.6320], [38.3480, 26.6720], [38.3100, 26.6750], [38.3080, 26.6350]] 
-            },
+            { name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640, pop: 4200 },
+            { name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710, pop: 6800 },
+            { name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730, pop: 5400 },
+            { name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220, pop: 6100 },
+            { name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480, pop: 7900 },
+            { name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290, pop: 3100 },
+            { name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520, pop: 4800 },
 
             // Seferihisar (9 Mahalle)
-            { 
-                name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390, pop: 12500,
-                polygon: [[38.2080, 26.8250], [38.2100, 26.8520], [38.1880, 26.8550], [38.1850, 26.8280]] 
-            },
-            { 
-                name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450, pop: 11200,
-                polygon: [[38.2000, 26.8320], [38.2020, 26.8580], [38.1820, 26.8620], [38.1800, 26.8350]] 
-            },
-            { 
-                name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410, pop: 9800,
-                polygon: [[38.2120, 26.8280], [38.2150, 26.8520], [38.1960, 26.8550], [38.1940, 26.8300]] 
-            },
-            { 
-                name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880, pop: 4300,
-                polygon: [[38.2080, 26.7720], [38.2100, 26.8050], [38.1820, 26.8080], [38.1800, 26.7750]] 
-            },
-            { 
-                name: 'Akarca', district: 'Seferihisar', lat: 38.1680, lng: 26.8290, pop: 3200,
-                polygon: [[38.1780, 26.8150], [38.1800, 26.8420], [38.1580, 26.8450], [38.1560, 26.8180]] 
-            },
-            { 
-                name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520, pop: 2800,
-                polygon: [[38.2580, 26.8320], [38.2600, 26.8720], [38.2250, 26.8750], [38.2220, 26.8350]] 
-            },
-            { 
-                name: 'Düzce', district: 'Seferihisar', lat: 38.2250, lng: 26.8350, pop: 1900,
-                polygon: [[38.2380, 26.8180], [38.2400, 26.8520], [38.2120, 26.8550], [38.2100, 26.8200]] 
-            },
-            { 
-                name: 'Doğanbey', district: 'Seferihisar', lat: 38.0890, lng: 26.8890, pop: 6400,
-                polygon: [[38.1050, 26.8680], [38.1080, 26.9100], [38.0720, 26.9120], [38.0700, 26.8700]] 
-            },
-            { 
-                name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280, pop: 7100,
-                polygon: [[38.0980, 26.9080], [38.1000, 26.9480], [38.0650, 26.9500], [38.0620, 26.9100]] 
-            }
+            { name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390, pop: 12500 },
+            { name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450, pop: 11200 },
+            { name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410, pop: 9800 },
+            { name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880, pop: 4300 },
+            { name: 'Akarca', district: 'Seferihisar', lat: 38.1680, lng: 26.8290, pop: 3200 },
+            { name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520, pop: 2800 },
+            { name: 'Düzce', district: 'Seferihisar', lat: 38.2250, lng: 26.8350, pop: 1900 },
+            { name: 'Doğanbey', district: 'Seferihisar', lat: 38.0890, lng: 26.8890, pop: 6400 },
+            { name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280, pop: 7100 }
         ];
 
         let currentCalculationMode = 'osrm';
@@ -501,23 +431,12 @@
             filtered.forEach(item => {
                 const colorHex = item.assignedHospital.color;
 
-                if (item.polygon) {
-                    const poly = L.polygon(item.polygon, {
-                        color: colorHex,
-                        fillColor: colorHex,
-                        fillOpacity: 0.35,
-                        weight: 2
-                    }).addTo(neighborhoodLayerGroup);
-
-                    poly.on('click', () => drawRoutesForPoint(item));
-                }
-
                 const marker = L.circleMarker([item.lat, item.lng], {
-                    radius: 7,
+                    radius: 8,
                     fillColor: colorHex,
                     color: '#ffffff',
                     weight: 2,
-                    fillOpacity: 1
+                    fillOpacity: 0.95
                 }).addTo(neighborhoodLayerGroup);
 
                 marker.bindPopup(`
