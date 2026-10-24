@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İzmir Yarımada Hastane Ulaşım Analizi ve Canlı Rota Haritası</title>
+    <title>İzmir Yarımada Hastane Ulaşım ve Nüfus Hizmet Bölgesi Analizi</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -128,33 +128,33 @@
 <body class="h-full bg-slate-900 text-slate-800 flex flex-col md:flex-row overflow-hidden">
 
     <!-- Mobile Top Header Bar -->
-    <div class="md:hidden bg-slate-900 text-white p-3.5 flex items-center justify-between z-20 shadow-md border-b border-slate-800">
+    <div class="md:hidden bg-slate-900 text-white p-3 flex items-center justify-between z-30 shadow-md border-b border-slate-800">
         <div class="flex items-center space-x-2">
             <i class="fa-solid fa-hospital-user text-rose-500 text-lg"></i>
             <div>
-                <h1 class="font-bold text-sm tracking-tight leading-none">İzmir Hastane Ulaşım Analizi</h1>
-                <span class="text-[10px] text-rose-400 font-medium">Güzelbahçe • Urla • Seferihisar</span>
+                <h1 class="font-bold text-xs tracking-tight leading-none">İzmir Hastane Ulaşım Analizi</h1>
+                <span class="text-[9px] text-rose-400 font-medium">Güzelbahçe • Urla • Seferihisar</span>
             </div>
         </div>
-        <button id="toggleSidebarBtn" class="px-3 py-1.5 bg-slate-800 text-slate-200 rounded-lg text-xs flex items-center gap-2 border border-slate-700">
+        <button id="toggleSidebarBtn" class="px-2.5 py-1.5 bg-slate-800 text-slate-200 rounded-lg text-xs flex items-center gap-1.5 border border-slate-700">
             <i class="fa-solid fa-bars"></i>
             <span>Kontrol Paneli</span>
         </button>
     </div>
 
-    <!-- Sidebar Control & Information Drawer -->
-    <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-full md:w-96 bg-white flex flex-col border-r border-slate-200 shadow-2xl transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static">
+    <!-- Sidebar Control Drawer -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-full md:w-96 bg-white flex flex-col border-r border-slate-200 shadow-2xl transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:static">
         
         <!-- Sidebar Header -->
         <div class="p-4 bg-slate-900 text-white flex flex-col gap-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-route text-lg"></i>
+                        <i class="fa-solid fa-chart-pie text-lg"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold text-base leading-tight">Hastane Ulaşım Analizi</h2>
-                        <p class="text-xs text-slate-400">İzmir Yarımada Mahalle Atamaları</p>
+                        <h2 class="font-bold text-base leading-tight">Hastane Hizmet Bölgesi</h2>
+                        <p class="text-xs text-slate-400">Nüfus ve Ulaşım Analiz Paneli</p>
                     </div>
                 </div>
                 <button id="closeSidebarBtn" class="md:hidden text-slate-400 hover:text-white p-1">
@@ -226,7 +226,7 @@
             </div>
         </div>
 
-        <!-- Dynamic Summary Statistics Panel -->
+        <!-- Sidebar Detailed Breakdown Stats Panel -->
         <div class="bg-slate-50 p-3 border-b border-slate-200 grid grid-cols-3 gap-2 text-center text-xs">
             <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <span class="block text-slate-400 text-[9px] uppercase font-bold">Toplam Mahalle</span>
@@ -268,22 +268,98 @@
 
         <!-- Footer Info -->
         <div class="p-2.5 bg-slate-50 border-t border-slate-200 text-center text-[10px] text-slate-500">
-            <span><i class="fa-solid fa-route text-rose-500 mr-1"></i>Bir mahalleye veya haritadaki herhangi bir noktaya tıklayarak canlı rotaları görebilirsiniz.</span>
+            <span><i class="fa-solid fa-map-location-dot text-rose-500 mr-1"></i>Mahalle poligonuna tıklayarak canlı rotaları görebilirsiniz.</span>
         </div>
     </aside>
 
-    <!-- Main Map Container -->
-    <main class="flex-1 relative h-full w-full">
-        <div id="map"></div>
+    <!-- Main Map Container & Top Floating Analytics Header -->
+    <main class="flex-1 relative h-full w-full flex flex-col">
+
+        <!-- DYNAMIC TOP FLOATING ANALYTICS BANNER HEADER -->
+        <header id="topDynamicHeader" class="absolute top-3 left-3 right-3 md:left-4 md:right-4 z-[1000] bg-slate-900/95 backdrop-blur-md text-white p-3 md:p-3.5 rounded-2xl border border-slate-700/80 shadow-2xl transition-all duration-300">
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-2.5 items-center">
+                
+                <!-- Card 1: Total Population Analyzed -->
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-slate-200 flex-shrink-0">
+                        <i class="fa-solid fa-users text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-400 uppercase font-bold block leading-none">Analiz Nüfusu</span>
+                        <span id="topTotalPop" class="text-sm font-black text-white">0</span>
+                        <span id="topTotalNeighborhoods" class="text-[9px] text-slate-400 block leading-none mt-0.5">(0 Mahalle)</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Seferihisar DH Service Pop & % -->
+                <div class="bg-rose-950/40 p-2.5 rounded-xl border border-rose-500/40 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-rose-600 flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                        <i class="fa-solid fa-hospital text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-rose-300 uppercase font-bold block leading-none">Seferihisar DH Nüfusu</span>
+                        <div class="flex items-baseline gap-1">
+                            <span id="topSeferiPop" class="text-sm font-black text-rose-400">0</span>
+                            <span id="topSeferiPct" class="text-[10px] font-bold text-rose-300">(%0)</span>
+                        </div>
+                        <span id="topSeferiCount" class="text-[9px] text-rose-300/80 block leading-none mt-0.5">0 Mahalle</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Urla DH Service Pop & % -->
+                <div class="bg-blue-950/40 p-2.5 rounded-xl border border-blue-500/40 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                        <i class="fa-solid fa-hospital text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-blue-300 uppercase font-bold block leading-none">Urla DH Nüfusu</span>
+                        <div class="flex items-baseline gap-1">
+                            <span id="topUrlaPop" class="text-sm font-black text-blue-400">0</span>
+                            <span id="topUrlaPct" class="text-[10px] font-bold text-blue-300">(%0)</span>
+                        </div>
+                        <span id="topUrlaCount" class="text-[9px] text-blue-300/80 block leading-none mt-0.5">0 Mahalle</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Avg Access Duration -->
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center text-slate-900 flex-shrink-0 font-bold">
+                        <i class="fa-solid fa-clock text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-slate-400 uppercase font-bold block leading-none">Ort. Ulaşım Süresi</span>
+                        <span id="topAvgDuration" class="text-sm font-black text-amber-400">0 dk</span>
+                        <span class="text-[9px] text-slate-400 block leading-none mt-0.5">En Yakın Hastaneye</span>
+                    </div>
+                </div>
+
+                <!-- Card 5: Calculation Mode Indicator -->
+                <div class="col-span-2 lg:col-span-1 bg-slate-800/80 p-2.5 rounded-xl border border-slate-700 flex items-center justify-between lg:justify-start gap-2">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white flex-shrink-0">
+                            <i id="topModeIcon" class="fa-solid fa-car-side text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-[9px] text-slate-400 uppercase font-bold block leading-none">Hesaplama Modu</span>
+                            <span id="topModeTitle" class="text-xs font-bold text-indigo-300 block">OSRM Sürüş Süresi</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- Leaflet Map Canvas -->
+        <div id="map" class="pt-24 md:pt-20"></div>
 
         <!-- Floating Clear Routes Button (On Map) -->
-        <button id="clearRoutesMapBtn" class="hidden absolute top-4 right-16 z-[1000] bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2 border border-white/20 transition-all transform hover:scale-105">
+        <button id="clearRoutesMapBtn" class="hidden absolute top-28 md:top-24 right-4 z-[1000] bg-amber-500 hover:bg-amber-600 text-white px-3.5 py-2 rounded-xl shadow-xl text-xs font-bold flex items-center gap-2 border border-white/20 transition-all transform hover:scale-105">
             <i class="fa-solid fa-trash-can"></i>
             <span>Rotaları Temizle</span>
         </button>
 
         <!-- Quick Reset Map View Button -->
-        <button id="resetViewBtn" class="absolute top-4 left-4 z-[1000] bg-white text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all hover:bg-slate-50">
+        <button id="resetViewBtn" class="absolute top-28 md:top-24 left-4 z-[1000] bg-white text-slate-700 hover:text-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 shadow-lg text-xs font-semibold flex items-center gap-2 transition-all hover:bg-slate-50">
             <i class="fa-solid fa-expand"></i>
             <span>Bölgeye Odaklan</span>
         </button>
@@ -315,12 +391,12 @@
                 </div>
                 <div class="pt-2 border-t border-slate-100 grid grid-cols-2 gap-1.5 text-[10px]">
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3.5 h-1 bg-[#e74c3c] rounded inline-block"></span>
-                        <span class="text-slate-700 font-medium">Seferihisar Rotası</span>
+                        <span class="w-3.5 h-2 bg-[#e74c3c] rounded opacity-75 inline-block border border-rose-600"></span>
+                        <span class="text-slate-700 font-medium">Seferihisar Bölgesi</span>
                     </div>
                     <div class="flex items-center gap-1.5">
-                        <span class="w-3.5 h-1 bg-[#3498db] rounded inline-block"></span>
-                        <span class="text-slate-700 font-medium">Urla Rotası</span>
+                        <span class="w-3.5 h-2 bg-[#3498db] rounded opacity-75 inline-block border border-blue-600"></span>
+                        <span class="text-slate-700 font-medium">Urla Bölgesi</span>
                     </div>
                 </div>
             </div>
@@ -356,64 +432,49 @@
             }
         };
 
-        // Neighborhoods Dataset
+        // -------------------------------------------------------------
+        // 2. NEIGHBORHOOD DATASET WITH POPULATION & POLYGON BOUNDARIES
+        // -------------------------------------------------------------
+
+        // Helper to generate bounding polygon around centroid
+        function createBoundBox(centerLat, centerLng, dLat = 0.012, dLng = 0.018) {
+            return [
+                [centerLat + dLat, centerLng - dLng],
+                [centerLat + dLat * 0.8, centerLng + dLng],
+                [centerLat - dLat, centerLng + dLng * 0.9],
+                [centerLat - dLat * 0.9, centerLng - dLng * 0.8]
+            ];
+        }
+
         const NEIGHBORHOODS_DATA = [
             // Güzelbahçe
-            { name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920 },
-            { name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680 },
-            { name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950 },
-            { name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820 },
-            { name: 'Atatürk', district: 'Güzelbahçe', lat: 38.3650, lng: 26.8870 },
-            { name: 'Mustafa Kemal Paşa', district: 'Güzelbahçe', lat: 38.3630, lng: 26.9010 },
-            { name: 'Çelebi', district: 'Güzelbahçe', lat: 38.3700, lng: 26.9080 },
-            { name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850 },
-            { name: 'Çamlı', district: 'Güzelbahçe', lat: 38.3180, lng: 26.9080 },
-            { name: 'Payamlı (Güzelbahçe)', district: 'Güzelbahçe', lat: 38.3050, lng: 26.8900 },
-            { name: 'Yaka', district: 'Güzelbahçe', lat: 38.3580, lng: 26.8780 },
-            { name: 'Küçükkaya', district: 'Güzelbahçe', lat: 38.3310, lng: 26.9150 },
+            { name: 'Yalı', district: 'Güzelbahçe', lat: 38.3745, lng: 26.8920, population: 6500, polygon: createBoundBox(38.3745, 26.8920, 0.009, 0.015) },
+            { name: 'Siteler', district: 'Güzelbahçe', lat: 38.3685, lng: 26.8680, population: 5200, polygon: createBoundBox(38.3685, 26.8680, 0.008, 0.014) },
+            { name: 'Kahramandere', district: 'Güzelbahçe', lat: 38.3610, lng: 26.8950, population: 8800, polygon: createBoundBox(38.3610, 26.8950, 0.010, 0.016) },
+            { name: 'Maltepe', district: 'Güzelbahçe', lat: 38.3710, lng: 26.8820, population: 4100, polygon: createBoundBox(38.3710, 26.8820, 0.008, 0.012) },
+            { name: 'Atatürk', district: 'Güzelbahçe', lat: 38.3650, lng: 26.8870, population: 5600, polygon: createBoundBox(38.3650, 26.8870, 0.008, 0.013) },
+            { name: 'Yelki', district: 'Güzelbahçe', lat: 38.3420, lng: 26.8850, population: 12400, polygon: createBoundBox(38.3420, 26.8850, 0.014, 0.022) },
+            { name: 'Çamlı', district: 'Güzelbahçe', lat: 38.3180, lng: 26.9080, population: 2800, polygon: createBoundBox(38.3180, 26.9080, 0.015, 0.024) },
 
             // Urla
-            { name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640 },
-            { name: 'Torasan / Yelaltı', district: 'Urla', lat: 38.3180, lng: 26.7720 },
-            { name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710 },
-            { name: 'Camiatik', district: 'Urla', lat: 38.3220, lng: 26.7680 },
-            { name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730 },
-            { name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220 },
-            { name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480 },
-            { name: 'Denizli', district: 'Urla', lat: 38.3720, lng: 26.7910 },
-            { name: 'Şirinkent', district: 'Urla', lat: 38.3690, lng: 26.7610 },
-            { name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290 },
-            { name: 'Özbek', district: 'Urla', lat: 38.3780, lng: 26.7280 },
-            { name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520 },
-            { name: 'Kuşçular', district: 'Urla', lat: 38.2910, lng: 26.7450 },
-            { name: 'Yağcılar', district: 'Urla', lat: 38.2480, lng: 26.7320 },
-            { name: 'Demircili', district: 'Urla', lat: 38.2210, lng: 26.6980 },
-            { name: 'Barbaros', district: 'Urla', lat: 38.2980, lng: 26.6210 },
-            { name: 'Sıra', district: 'Urla', lat: 38.3210, lng: 26.7620 },
-            { name: 'Altıntaş', district: 'Urla', lat: 38.3250, lng: 26.7560 },
-            { name: 'Atatürk (Urla)', district: 'Urla', lat: 38.3550, lng: 26.7820 },
-            { name: 'Birgi', district: 'Urla', lat: 38.2750, lng: 26.6850 },
-            { name: 'Uzunkuyu', district: 'Urla', lat: 38.2880, lng: 26.5410 },
-            { name: 'Zeytinler', district: 'Urla', lat: 38.2890, lng: 26.5820 },
-            { name: 'Balıklıova', district: 'Urla', lat: 38.4410, lng: 26.5720 },
+            { name: 'Hacı İsa', district: 'Urla', lat: 38.3240, lng: 26.7640, population: 7500, polygon: createBoundBox(38.3240, 26.7640, 0.009, 0.014) },
+            { name: 'Yeni Mahalle', district: 'Urla', lat: 38.3260, lng: 26.7710, population: 6200, polygon: createBoundBox(38.3260, 26.7710, 0.008, 0.013) },
+            { name: 'İskele', district: 'Urla', lat: 38.3610, lng: 26.7730, population: 8900, polygon: createBoundBox(38.3610, 26.7730, 0.012, 0.018) },
+            { name: 'Kalabak', district: 'Urla', lat: 38.3650, lng: 26.8220, population: 9400, polygon: createBoundBox(38.3650, 26.8220, 0.011, 0.019) },
+            { name: 'Zeytinalanı', district: 'Urla', lat: 38.3630, lng: 26.8480, population: 11200, polygon: createBoundBox(38.3630, 26.8480, 0.012, 0.020) },
+            { name: 'Bademler', district: 'Urla', lat: 38.2830, lng: 26.8290, population: 3100, polygon: createBoundBox(38.2830, 26.8290, 0.016, 0.025) },
+            { name: 'Gülbahçe', district: 'Urla', lat: 38.3280, lng: 26.6520, population: 4800, polygon: createBoundBox(38.3280, 26.6520, 0.018, 0.028) },
 
             // Seferihisar
-            { name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390 },
-            { name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450 },
-            { name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410 },
-            { name: 'Hıdırlık', district: 'Seferihisar', lat: 38.2010, lng: 26.8320 },
-            { name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880 },
-            { name: 'Akarca', district: 'Seferihisar', lat: 38.1680, lng: 26.8290 },
-            { name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520 },
-            { name: 'Düzce', district: 'Seferihisar', lat: 38.2250, lng: 26.8350 },
-            { name: 'Doğanbey', district: 'Seferihisar', lat: 38.0890, lng: 26.8890 },
-            { name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280 },
-            { name: 'Beyler', district: 'Seferihisar', lat: 38.2050, lng: 26.9380 },
-            { name: 'Orhanlı', district: 'Seferihisar', lat: 38.2280, lng: 26.9680 },
-            { name: 'Payamlı (Seferihisar)', district: 'Seferihisar', lat: 38.0930, lng: 26.9050 },
-            { name: 'Tepecik', district: 'Seferihisar', lat: 38.1880, lng: 26.8220 },
-            { name: 'Mersinaki', district: 'Seferihisar', lat: 38.1850, lng: 26.8120 },
-            { name: 'Turgut', district: 'Seferihisar', lat: 38.2610, lng: 26.8910 }
+            { name: 'Camikebir', district: 'Seferihisar', lat: 38.1970, lng: 26.8390, population: 11500, polygon: createBoundBox(38.1970, 26.8390, 0.010, 0.016) },
+            { name: 'Turabiye', district: 'Seferihisar', lat: 38.1920, lng: 26.8450, population: 12800, polygon: createBoundBox(38.1920, 26.8450, 0.011, 0.017) },
+            { name: 'Çolak İbrahim Bey', district: 'Seferihisar', lat: 38.2040, lng: 26.8410, population: 9200, polygon: createBoundBox(38.2040, 26.8410, 0.010, 0.015) },
+            { name: 'Sığacık', district: 'Seferihisar', lat: 38.1950, lng: 26.7880, population: 4600, polygon: createBoundBox(38.1950, 26.7880, 0.014, 0.022) },
+            { name: 'Akarca', district: 'Seferihisar', lat: 38.1680, lng: 26.8290, population: 3800, polygon: createBoundBox(38.1680, 26.8290, 0.013, 0.020) },
+            { name: 'Ulamış', district: 'Seferihisar', lat: 38.2410, lng: 26.8520, population: 3200, polygon: createBoundBox(38.2410, 26.8520, 0.015, 0.024) },
+            { name: 'Düzce', district: 'Seferihisar', lat: 38.2250, lng: 26.8350, population: 2100, polygon: createBoundBox(38.2250, 26.8350, 0.012, 0.020) },
+            { name: 'Doğanbey', district: 'Seferihisar', lat: 38.0890, lng: 26.8890, population: 5400, polygon: createBoundBox(38.0890, 26.8890, 0.020, 0.030) },
+            { name: 'Ürkmez', district: 'Seferihisar', lat: 38.0820, lng: 26.9280, population: 7600, polygon: createBoundBox(38.0820, 26.9280, 0.022, 0.032) }
         ];
 
         let currentCalculationMode = 'osrm'; // 'osrm' or 'euclidean'
@@ -421,7 +482,7 @@
         const routeGeoJsonCache = new Map();
 
         // -------------------------------------------------------------
-        // 2. LEAFLET MAP & KEYLESS BASEMAP TILES SETUP
+        // 3. LEAFLET MAP & KEYLESS BASEMAP TILES SETUP
         // -------------------------------------------------------------
 
         const initialCenter = [38.25, 26.80];
@@ -442,23 +503,21 @@
             attribution: 'Tiles &copy; Esri'
         });
 
-        // Add default map layer
         osmStandard.addTo(map);
 
-        // Base maps control
         const baseMaps = {
             "OpenStreetMap Standart": osmStandard,
             "Esri Sokak Haritası": esriStreet
         };
         L.control.layers(baseMaps, null, { position: 'topright' }).addTo(map);
 
-        const neighborhoodLayerGroup = L.layerGroup().addTo(map);
+        const polygonLayerGroup = L.layerGroup().addTo(map);
         const routeLayerGroup = L.layerGroup().addTo(map);
-        const neighborhoodMarkersMap = new Map();
+        const polygonMarkersMap = new Map();
         let activePointMarker = null;
 
         // -------------------------------------------------------------
-        // 3. DISTANCE & OSRM ROUTE FETCHERS
+        // 4. DISTANCE & OSRM ROUTE FETCHERS
         // -------------------------------------------------------------
 
         function calculateHaversine(lat1, lon1, lat2, lon2) {
@@ -471,7 +530,6 @@
             return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
         }
 
-        // Fetch basic route summary info (distance & duration)
         async function fetchOSRMRouteSummary(fromLat, fromLng, toLat, toLng) {
             const cacheKey = `${fromLat.toFixed(4)},${fromLng.toFixed(4)}->${toLat.toFixed(4)},${toLng.toFixed(4)}`;
             if (osrmCache.has(cacheKey)) return osrmCache.get(cacheKey);
@@ -503,7 +561,6 @@
             return fallbackResult;
         }
 
-        // Fetch full GeoJSON route geometry for drawing polylines on map
         async function fetchOSRMFullRouteGeoJSON(fromLat, fromLng, toLat, toLng) {
             const cacheKey = `geojson:${fromLat.toFixed(4)},${fromLng.toFixed(4)}->${toLat.toFixed(4)},${toLng.toFixed(4)}`;
             if (routeGeoJsonCache.has(cacheKey)) return routeGeoJsonCache.get(cacheKey);
@@ -532,14 +589,12 @@
         }
 
         // -------------------------------------------------------------
-        // 4. DRAWING DRIVING ROUTES ON MAP
+        // 5. DRAWING DRIVING ROUTES ON MAP
         // -------------------------------------------------------------
 
         async function drawDrivingRoutes(fromLat, fromLng, locationTitle = "Seçilen Nokta") {
-            // Clear existing drawn routes
             clearDrivingRoutes();
 
-            // Create active point marker
             const clickIcon = L.divIcon({
                 className: 'custom-click-icon',
                 html: `<div class="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm shadow-2xl border-2 border-white transform animate-bounce">
@@ -551,7 +606,6 @@
 
             activePointMarker = L.marker([fromLat, fromLng], { icon: clickIcon }).addTo(routeLayerGroup);
 
-            // Show loading indicator popup
             activePointMarker.bindPopup(`
                 <div class="p-3 bg-slate-900 text-white rounded-t-xl flex items-center gap-2">
                     <i class="fa-solid fa-spinner animate-spin text-amber-400"></i>
@@ -559,7 +613,6 @@
                 </div>
             `).openPopup();
 
-            // Fetch routes to both hospitals in parallel
             const [seferiRoute, urlaRoute] = await Promise.all([
                 fetchOSRMFullRouteGeoJSON(fromLat, fromLng, HOSPITALS.SEFERIHISAR.lat, HOSPITALS.SEFERIHISAR.lng),
                 fetchOSRMFullRouteGeoJSON(fromLat, fromLng, HOSPITALS.URLA.lat, HOSPITALS.URLA.lng)
@@ -570,19 +623,17 @@
             boundsGroup.push([HOSPITALS.SEFERIHISAR.lat, HOSPITALS.SEFERIHISAR.lng]);
             boundsGroup.push([HOSPITALS.URLA.lat, HOSPITALS.URLA.lng]);
 
-            // Draw Seferihisar Route (RED POLYLINE)
             if (seferiRoute && seferiRoute.geometry) {
-                const seferiPolyline = L.geoJSON(seferiRoute.geometry, {
+                L.geoJSON(seferiRoute.geometry, {
                     style: {
                         color: HOSPITALS.SEFERIHISAR.color,
                         weight: 5,
-                        opacity: 0.85,
+                        opacity: 0.9,
                         lineCap: 'round',
                         lineJoin: 'round'
                     }
                 }).addTo(routeLayerGroup);
 
-                // Add route label badge at midpoint
                 const coords = seferiRoute.geometry.coordinates;
                 const midIndex = Math.floor(coords.length / 2);
                 const midPt = [coords[midIndex][1], coords[midIndex][0]];
@@ -597,13 +648,12 @@
                 .addTo(routeLayerGroup);
             }
 
-            // Draw Urla Route (BLUE POLYLINE)
             if (urlaRoute && urlaRoute.geometry) {
-                const urlaPolyline = L.geoJSON(urlaRoute.geometry, {
+                L.geoJSON(urlaRoute.geometry, {
                     style: {
                         color: HOSPITALS.URLA.color,
                         weight: 5,
-                        opacity: 0.85,
+                        opacity: 0.9,
                         lineCap: 'round',
                         lineJoin: 'round'
                     }
@@ -623,7 +673,6 @@
                 .addTo(routeLayerGroup);
             }
 
-            // Update Popup content with details
             const isSeferiClosest = seferiRoute && urlaRoute ? seferiRoute.durationMin <= urlaRoute.durationMin : true;
             
             const popupHtml = `
@@ -647,11 +696,8 @@
             `;
 
             activePointMarker.bindPopup(popupHtml).openPopup();
+            map.fitBounds(boundsGroup, { padding: [80, 80], maxZoom: 14 });
 
-            // Smoothly fit map bounds to encompass point and both hospitals
-            map.fitBounds(boundsGroup, { padding: [60, 60], maxZoom: 14 });
-
-            // Show clear route buttons
             document.getElementById('clearRoutesMapBtn').classList.remove('hidden');
             document.getElementById('clearRoutesSidebarBtn').classList.remove('hidden');
         }
@@ -666,14 +712,13 @@
         document.getElementById('clearRoutesMapBtn').addEventListener('click', clearDrivingRoutes);
         document.getElementById('clearRoutesSidebarBtn').addEventListener('click', clearDrivingRoutes);
 
-        // Map Click Listener to calculate routes for any custom point
         map.on('click', function(e) {
             const { lat, lng } = e.latlng;
             drawDrivingRoutes(lat, lng, `Özel Konum (${lat.toFixed(4)}, ${lng.toFixed(4)})`);
         });
 
         // -------------------------------------------------------------
-        // 5. DATA PROCESSING & ASSIGNMENT CALCULATIONS
+        // 6. DATA PROCESSING & ASSIGNMENT CALCULATIONS
         // -------------------------------------------------------------
 
         let processedData = [];
@@ -716,7 +761,7 @@
         }
 
         // -------------------------------------------------------------
-        // 6. MAP MARKERS & RENDERING
+        // 7. MAP MARKERS & NEIGHBORHOOD POLYGON RENDERING
         // -------------------------------------------------------------
 
         function createHospitalMarker(hospital, isNew = false) {
@@ -753,67 +798,136 @@
         createHospitalMarker(HOSPITALS.URLA, false);
 
         function renderMapLayers() {
-            neighborhoodLayerGroup.clearLayers();
-            neighborhoodMarkersMap.clear();
+            polygonLayerGroup.clearLayers();
+            polygonMarkersMap.clear();
 
             processedData.forEach(item => {
                 const colorHex = item.assignedHospital.color;
 
-                const circlePolygon = L.circle([item.lat, item.lng], {
-                    radius: 700,
+                // Create Neighborhood Area Polygon
+                const neighborhoodPolygon = L.polygon(item.polygon, {
                     color: colorHex,
                     fillColor: colorHex,
-                    fillOpacity: 0.25,
-                    weight: 1.5
-                }).addTo(neighborhoodLayerGroup);
+                    fillOpacity: 0.35,
+                    weight: 2,
+                    dashArray: '3, 3'
+                }).addTo(polygonLayerGroup);
 
-                const circleMarker = L.circleMarker([item.lat, item.lng], {
-                    radius: 7.5,
+                // Create Centroid Marker
+                const centroidMarker = L.circleMarker([item.lat, item.lng], {
+                    radius: 6,
                     fillColor: colorHex,
                     color: '#ffffff',
                     weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.95
-                }).addTo(neighborhoodLayerGroup);
+                    fillOpacity: 1
+                }).addTo(polygonLayerGroup);
 
-                circleMarker.on('mouseover', function() {
-                    this.setStyle({ radius: 10, weight: 3 });
-                    circlePolygon.setStyle({ fillOpacity: 0.5 });
+                // Polygon Hover Effects
+                neighborhoodPolygon.on('mouseover', function() {
+                    this.setStyle({ fillOpacity: 0.65, weight: 3, dashArray: '' });
+                    centroidMarker.setStyle({ radius: 9 });
                 });
-                circleMarker.on('mouseout', function() {
-                    this.setStyle({ radius: 7.5, weight: 2 });
-                    circlePolygon.setStyle({ fillOpacity: 0.25 });
+                neighborhoodPolygon.on('mouseout', function() {
+                    this.setStyle({ fillOpacity: 0.35, weight: 2, dashArray: '3, 3' });
+                    centroidMarker.setStyle({ radius: 6 });
                 });
 
-                // Click neighborhood point to draw live route
-                circleMarker.on('click', function(e) {
+                // Polygon Click Listener -> Draw driving routes
+                const handlePolygonClick = (e) => {
                     L.DomEvent.stopPropagation(e);
                     drawDrivingRoutes(item.lat, item.lng, `${item.name} Mah. (${item.district})`);
-                });
+                };
 
-                neighborhoodMarkersMap.set(item.id, circleMarker);
+                neighborhoodPolygon.on('click', handlePolygonClick);
+                centroidMarker.on('click', handlePolygonClick);
+
+                // Bind tooltip to polygon
+                neighborhoodPolygon.bindTooltip(`
+                    <div class="font-bold text-xs">${item.name} Mah. (${item.district})</div>
+                    <div class="text-[10px]">Nüfus: ${item.population.toLocaleString('tr-TR')} • En Yakın: ${item.assignedHospital.shortName}</div>
+                `, { sticky: true });
+
+                polygonMarkersMap.set(item.id, { polygon: neighborhoodPolygon, marker: centroidMarker });
             });
         }
 
         // -------------------------------------------------------------
-        // 7. CSV EXPORT FUNCTIONALITY
+        // 8. DYNAMIC TOP BANNER ANALYTICS UPDATER
+        // -------------------------------------------------------------
+
+        function updateTopBannerStats(filteredItems) {
+            const totalCount = filteredItems.length;
+            let totalPop = 0;
+            let seferiPop = 0;
+            let urlaPop = 0;
+            let seferiCount = 0;
+            let urlaCount = 0;
+            let totalDurationSum = 0;
+
+            filteredItems.forEach(item => {
+                const pop = item.population || 0;
+                totalPop += pop;
+
+                const duration = item.isSeferiClosest ? parseFloat(item.seferi.durationMin) : parseFloat(item.urla.durationMin);
+                totalDurationSum += duration;
+
+                if (item.isSeferiClosest) {
+                    seferiPop += pop;
+                    seferiCount++;
+                } else {
+                    urlaPop += pop;
+                    urlaCount++;
+                }
+            });
+
+            const seferiPct = totalPop > 0 ? ((seferiPop / totalPop) * 100).toFixed(1) : '0';
+            const urlaPct = totalPop > 0 ? ((urlaPop / totalPop) * 100).toFixed(1) : '0';
+            const avgDuration = totalCount > 0 ? (totalDurationSum / totalCount).toFixed(1) : '0';
+
+            // Update DOM Elements
+            document.getElementById('topTotalPop').innerText = `${totalPop.toLocaleString('tr-TR')} Kişi`;
+            document.getElementById('topTotalNeighborhoods').innerText = `(${totalCount} Mahalle)`;
+
+            document.getElementById('topSeferiPop').innerText = `${seferiPop.toLocaleString('tr-TR')} Kişi`;
+            document.getElementById('topSeferiPct').innerText = `(%${seferiPct})`;
+            document.getElementById('topSeferiCount').innerText = `${seferiCount} Mahalle`;
+
+            document.getElementById('topUrlaPop').innerText = `${urlaPop.toLocaleString('tr-TR')} Kişi`;
+            document.getElementById('topUrlaPct').innerText = `(%${urlaPct})`;
+            document.getElementById('topUrlaCount').innerText = `${urlaCount} Mahalle`;
+
+            document.getElementById('topAvgDuration').innerText = `${avgDuration} dk`;
+
+            const modeTitleEl = document.getElementById('topModeTitle');
+            const modeIconEl = document.getElementById('topModeIcon');
+            if (currentCalculationMode === 'osrm') {
+                modeTitleEl.innerText = "OSRM Canlı Sürüş";
+                modeIconEl.className = "fa-solid fa-car-side text-sm";
+            } else {
+                modeTitleEl.innerText = "Kuş Uçuşu Mesafe";
+                modeIconEl.className = "fa-solid fa-ruler-lines text-sm";
+            }
+        }
+
+        // -------------------------------------------------------------
+        // 9. CSV EXPORT FUNCTIONALITY
         // -------------------------------------------------------------
 
         function exportToCSV() {
             if (!processedData || processedData.length === 0) return;
 
-            let csvContent = "\uFEFF"; // UTF-8 BOM for Turkish character support in Excel
-            csvContent += "İlçe,Mahalle,En Yakın Hastane,Seferihisar Mesafe (km),Seferihisar Süre (dk),Urla Mesafe (km),Urla Süre (dk),Enlem,Boylam\n";
+            let csvContent = "\uFEFF"; // UTF-8 BOM
+            csvContent += "İlçe,Mahalle,Nüfus,En Yakın Hastane,Seferihisar Mesafe (km),Seferihisar Süre (dk),Urla Mesafe (km),Urla Süre (dk),Enlem,Boylam\n";
 
             processedData.forEach(item => {
-                csvContent += `"${item.district}","${item.name}","${item.assignedHospital.shortName}",${item.seferi.distKm},${item.seferi.durationMin},${item.urla.distKm},${item.urla.durationMin},${item.lat},${item.lng}\n`;
+                csvContent += `"${item.district}","${item.name}",${item.population},"${item.assignedHospital.shortName}",${item.seferi.distKm},${item.seferi.durationMin},${item.urla.distKm},${item.urla.durationMin},${item.lat},${item.lng}\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.setAttribute("href", url);
-            link.setAttribute("download", `izmir_hastane_ulasim_analizi_${currentCalculationMode}.csv`);
+            link.setAttribute("download", `izmir_hastane_ulasim_ve_nufus_analizi_${currentCalculationMode}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -822,7 +936,7 @@
         document.getElementById('exportCsvBtn').addEventListener('click', exportToCSV);
 
         // -------------------------------------------------------------
-        // 8. SIDEBAR CONTROLS & RENDER
+        // 10. SIDEBAR CONTROLS & RENDER
         // -------------------------------------------------------------
 
         const neighborhoodListEl = document.getElementById('neighborhoodList');
@@ -832,7 +946,7 @@
         let activeFilter = 'all';
         let searchQuery = '';
 
-        function updateStats(items) {
+        function updateSidebarStats(items) {
             const total = items.length;
             const seferiCount = items.filter(i => i.isSeferiClosest).length;
             const urlaCount = items.filter(i => !i.isSeferiClosest).length;
@@ -862,7 +976,9 @@
                 return matchesSearch && matchesFilter;
             });
 
-            updateStats(filtered);
+            updateSidebarStats(filtered);
+            updateTopBannerStats(filtered); // Synchronize top dynamic banner with filtered dataset!
+
             neighborhoodListEl.innerHTML = '';
 
             if (filtered.length === 0) {
@@ -882,7 +998,7 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">${item.district}</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">${item.district} • Nüfus: ${item.population.toLocaleString('tr-TR')}</span>
                             <h4 class="font-bold text-xs text-slate-800 group-hover:text-blue-600 transition-colors">${item.name} Mah.</h4>
                         </div>
                         <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border ${item.assignedHospital.badgeBg}">
@@ -901,7 +1017,7 @@
                         </div>
                     </div>
                     <div class="text-[10px] text-slate-400 text-right flex items-center justify-end gap-1 font-medium">
-                        <i class="fa-solid fa-route text-slate-400"></i> Rota Çiz
+                        <i class="fa-solid fa-route text-slate-400"></i> Poligona Git & Rota Çiz
                     </div>
                 `;
 
